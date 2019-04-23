@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    
+
     <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
     <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -174,7 +174,8 @@
         <hr>
         <footer class="footer">
             <div class="container">
-                <p><a href="/api/friends">API Friends List</a> | <a href="https://github.com/davidvo1990/Friend-Finder">GitHub Repo</a></p>
+                <p><a href="/api/friends">API Friends List</a> | <a
+                        href="https://github.com/davidvo1990/Friend-Finder">GitHub Repo</a></p>
             </div>
         </footer>
 
@@ -192,8 +193,7 @@
                 </div>
                 <div class="modal-body">
                     <h2 id="match-name"></h2>
-                    <img id="match-img"
-                        src="https://placekitten.com/640/360" alt="">
+                    <img id="match-img" src="https://placekitten.com/640/360" alt="">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -254,18 +254,38 @@
                     name: $("#name").val(),
                     photo: $("#photo").val(),
                     scores: [
-                        $("#q1").val(),
-                        $("#q2").val(),
-                        $("#q3").val(),
-                        $("#q4").val(),
-                        $("#q5").val(),
-                        $("#q6").val(),
-                        $("#q7").val(),
-                        $("#q8").val(),
-                        $("#q9").val(),
-                        $("#q10").val()
+                        parseInt($("#q1").val()),
+                        parseInt($("#q2").val()),
+                        parseInt($("#q3").val()),
+                        parseInt($("#q4").val()),
+                        parseInt($("#q5").val()),
+                        parseInt($("#q6").val()),
+                        parseInt($("#q7").val()),
+                        parseInt($("#q8").val()),
+                        parseInt($("#q9").val()),
+                        parseInt($("#q10").val())
                     ]
                 };
+                // console.log(userData.scores);
+
+                $.ajax({ url: "/api/friends", method: "GET" })
+                    .then(function (friendData) {
+
+                        // Here we then log the tableData to console, where it will show up as an object.
+                        // console.log(friendData[0].scores);
+                        var totalDifference = 0;
+                        var arr = [];
+                        for (var j = 0; j < friendData.length; j++) {
+                            totalDifference = 0;
+                            for (var i = 0; i < userData.scores.length; i++) {
+                                
+                                totalDifference += Math.abs(userData.scores[i] - friendData[j].scores[i])
+                            }
+                            console.log(totalDifference)
+                            arr.push(totalDifference)
+                        }
+                        console.log(arr)
+                    })
 
                 // AJAX post the data to the friends API.
                 $.post("/api/friends", userData, function (data) {

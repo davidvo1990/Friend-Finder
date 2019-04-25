@@ -28,7 +28,11 @@
     <!-- Chosen -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js"></script>
-
+    <style>
+        #match-img {
+            object-fit: scale-down
+        }
+    </style>
 </head>
 
 <body>
@@ -193,7 +197,9 @@
                 </div>
                 <div class="modal-body">
                     <h2 id="match-name"></h2>
-                    <img id="match-img" src="https://placekitten.com/640/360" alt="">
+                    <div id="div-img">
+                        <img id="match-img" src="https://placekitten.com/640/360" alt="">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -204,6 +210,8 @@
     </div>
 
     <script type="text/javascript">
+
+        var matchUser;
         // Chosen CSS
         var config = {
             ".chosen-select": {},
@@ -254,19 +262,20 @@
                     name: $("#name").val(),
                     photo: $("#photo").val(),
                     scores: [
-                        parseInt($("#q1").val()),
-                        parseInt($("#q2").val()),
-                        parseInt($("#q3").val()),
-                        parseInt($("#q4").val()),
-                        parseInt($("#q5").val()),
-                        parseInt($("#q6").val()),
-                        parseInt($("#q7").val()),
-                        parseInt($("#q8").val()),
-                        parseInt($("#q9").val()),
-                        parseInt($("#q10").val())
+                        $("#q1").val(),
+                        $("#q2").val(),
+                        $("#q3").val(),
+                        $("#q4").val(),
+                        $("#q5").val(),
+                        $("#q6").val(),
+                        $("#q7").val(),
+                        $("#q8").val(),
+                        $("#q9").val(),
+                        $("#q10").val()
                     ]
                 };
                 // console.log(userData.scores);
+                var matchUser;
 
                 $.ajax({ url: "/api/friends", method: "GET" })
                     .then(function (friendData) {
@@ -278,30 +287,57 @@
                         for (var j = 0; j < friendData.length; j++) {
                             totalDifference = 0;
                             for (var i = 0; i < userData.scores.length; i++) {
-                                
+
                                 totalDifference += Math.abs(userData.scores[i] - friendData[j].scores[i])
                             }
-                            console.log(totalDifference)
+                            // console.log(totalDifference)
                             arr.push(totalDifference)
                         }
-                        console.log(arr)
+                        console.log("Array of totalDifference: " + arr)
+                        var beforeArr = arr.slice(0, -1)
+                        console.log("Array of totalDifference before push: " + beforeArr)
+
+                        var min = Math.min(...beforeArr)
+                        var indexMin = beforeArr.indexOf(Math.min(...beforeArr))
+                        console.log("Smallest differnce: " + min)
+                        console.log("Index of the smallest" + indexMin)
+                        matchUser = friendData[indexMin]
+                        console.log(matchUser)
+
+                        if (arr.length > 2) {
+                            // Grab the result from the AJAX post so that the best match's name and photo are displayed.
+                            $("#match-name").text(matchUser.name);
+                            $("#match-img").attr("src", matchUser.photo);
+
+                            // Show the modal with the best match
+                            $("#results-modal").modal("toggle");
+                        } else {
+                            // AJAX post the data to the friends API.
+                            $("#match-name").text(userData.name);
+                            $("#match-img").attr("src", userData.photo);
+
+                            // Show the modal with the best match
+                            $("#results-modal").modal("toggle");
+                        }
                     })
 
-                // AJAX post the data to the friends API.
+
+                // // AJAX post the data to the friends API.
                 $.post("/api/friends", userData, function (data) {
 
                     // Grab the result from the AJAX post so that the best match's name and photo are displayed.
-                    $("#match-name").text(data.name);
-                    $("#match-img").attr("src", data.photo);
+                    // $("#match-name").text(data.name);
+                    // $("#match-img").attr("src", data.photo);
 
-                    // Show the modal with the best match
-                    $("#results-modal").modal("toggle");
+                    // // Show the modal with the best match
+                    // $("#results-modal").modal("toggle");
 
                 });
             } else {
                 alert("Please fill out all fields before submitting!");
             }
         });
+
     </script>
 
 </body>

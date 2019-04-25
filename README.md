@@ -9,7 +9,7 @@ Use Express to handle routing. And deploy the app to Heroku for users fill it ou
 
 ### Demo
 
-* Check out [this demo version of the site](https://friend-finder-fsf.herokuapp.com/). Use this as a model for how we expect your assignment look and operate.
+* Check out [this demo version of the site](https://salty-gorge-97755.herokuapp.com/). Use this as a model for how we expect your assignment look and operate.
 
 * Create a folder called `FriendFinder`. Inside the folder, directories following:
 
